@@ -1,0 +1,113 @@
+{
+  "tests": [
+    {
+      "name": "grsh.c compile test",
+      "setup": "",
+      "run": "gcc -Wall -Werror -o grsh.out grsh.c",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 1,
+      "points": 5
+    },
+    {
+      "name": "grsh.c clean exit",
+      "setup": "",
+      "run": "./grsh.out test/seq.1; echo $?",
+      "output": "0\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 3
+    },
+    {
+      "name": "batch: change and list directory",
+      "setup": "",
+      "run": "bash test/test_framework.sh batch test/seq.2",
+      "output": "Test passes\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 2
+    },
+    {
+      "name": "interactive: change and list directory",
+      "setup": "",
+      "run": "bash test/test_framework.sh interactive test/seq.2",
+      "output": "Test passes\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 2
+    },
+    {
+      "name": "batch: run commands with multiple options",
+      "setup": "",
+      "run": "bash test/test_framework.sh batch test/seq.3",
+      "output": "Test passes\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 2
+    },
+    {
+      "name": "interactive: run commands with multiple options",
+      "setup": "",
+      "run": "bash test/test_framework.sh interactive test/seq.3",
+      "output": "Test passes\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 2
+    },
+    {
+      "name": "batch: view file, then change directory and view again",
+      "setup": "",
+      "run": "bash test/test_framework.sh batch test/seq.4",
+      "output": "Test passes\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 2
+    },
+    {
+      "name": "interactive: view file, then change directory and view again",
+      "setup": "",
+      "run": "bash test/test_framework.sh interactive test/seq.4",
+      "output": "Test passes\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 2
+    },
+    {
+      "name": "batch: change path",
+      "setup": "",
+      "run": "bash test/test_framework.sh batch test/seq.5",
+      "output": "Test passes\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 2
+    },
+    {
+      "name": "interactive: change path",
+      "setup": "",
+      "run": "bash test/test_framework.sh interactive test/seq.5",
+      "output": "Test passes\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 2
+    },
+    {
+      "name": "batch: parallel commands",
+      "setup": "",
+      "run": "bash test/test_framework.sh batch test/seq.6",
+      "output": "Test passes\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 3
+    },
+    {
+      "name": "interactive: parallel commands",
+      "setup": "",
+      "run": "bash test/test_framework.sh interactive test/seq.6",
+      "output": "Test passes\n",
+      "comparison": "exact",
+      "timeout": 1,
+      "points": 3
+    }   
+  ]
+}
