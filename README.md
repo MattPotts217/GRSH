@@ -1,4 +1,4 @@
-## Student Name:
+## Student Name: Matthew Potts
 
 # Assignment 4: Unix Shell
 
