@@ -33,7 +33,6 @@ int interactive_mode(char **path) {
     char *line = NULL;
     while(1) {
         printf("grsh> "); 
-        fflush(stdout); 
         size_t len; //setup buffer for reading input
         len = 0;
         ssize_t read = getline(&line, &len, stdin); 
@@ -77,13 +76,18 @@ int execute(char *line, char **path) {
     char *redirect_file = NULL;
     while (token != NULL && i < 63) {
         if (strcmp(token, ">") == 0) {
-            redirect_flag = 1;
             token = strtok(NULL, " ");
-            if (token == NULL || strtok(NULL, " ") != NULL) {
+            if (token == NULL) {
                 write(STDERR_FILENO, error_message, strlen(error_message));
                 return 1;
             }
+            redirect_flag = 1;
             redirect_file = token;
+
+            if (strtok(NULL, " ") != NULL) {
+                write(STDERR_FILENO, error_message, strlen(error_message));
+                return 1;
+            }
             break;
         }
         args[i++] = token;
