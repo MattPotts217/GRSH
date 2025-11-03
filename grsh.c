@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
 
 int interactive_mode(char **path) {
     char *line = NULL;
+    int len = 0;
     while(1) {
         printf("grsh> "); 
         fflush(stdout); 
@@ -93,11 +94,12 @@ int execute(char *line, char **path) {
     if (args[0] == NULL)
         return 0;
 
-    if (strcmp(args[0], "exit") == 0)
+    if (strcmp(args[0], "exit") == 0) {
         if(args[1] != NULL)
             write(STDERR_FILENO, error_message, strlen(error_message));
         else
             exit(0);
+    }
     else if (strcmp(args[0], "cd") == 0) {
         if (args[1] == NULL) {
             write(STDERR_FILENO, error_message, strlen(error_message));
