@@ -31,11 +31,11 @@ int main(int argc, char *argv[]) {
 
 int interactive_mode(char **path) {
     char *line = NULL;
-    int len = 0;
     while(1) {
         printf("grsh> "); 
         fflush(stdout); 
         size_t len; //setup buffer for reading input
+        len = 0;
         ssize_t read = getline(&line, &len, stdin); 
 
         if (read == -1) { // EOF
