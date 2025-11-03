@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 int interactive_mode(char **path);
 int batch_mode(char *fname, char **path);
