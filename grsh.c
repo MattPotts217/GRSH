@@ -8,7 +8,6 @@ int interactive_mode(char **path);
 int batch_mode(char *fname, char **path);
 int execute(char *line, char **path);
 
-
 char error_message[30] = "an error has occured\n";
 
 int main(int argc, char *argv[]) {
@@ -69,105 +68,126 @@ int batch_mode(char *fname, char **path) {
 }
 
 int execute(char *line, char **path) {
-    char *args[64];
-    int i = 0;
-    char *token = strtok(line, " ");
-    int redirect_flag = 0;
-    char *redirect_file = NULL;
-    while (token != NULL && i < 63) {
-        if (strcmp(token, ">") == 0) {
-            token = strtok(NULL, " ");
-            if (token == NULL) {
-                write(STDERR_FILENO, error_message, strlen(error_message));
-                return 1;
-            }
-            redirect_flag = 1;
-            redirect_file = token;
+    char *token = strtok(line, "&");
+    int a = 0;
+    char *commands[64];
 
-            if (strtok(NULL, " ") != NULL) {
-                write(STDERR_FILENO, error_message, strlen(error_message));
-                return 1;
-            }
-            break;
+    while (token != NULL && a < 63) {
+        while (*token == ' ') token++;                       
+        token[strcspn(token, "\n")] = '\0';                  
+
+        int len = strlen(token);
+        while (len > 0 && token[len - 1] == ' ') {
+            token[--len] = '\0';
         }
-        args[i++] = token;
-        token = strtok(NULL, " ");
+            commands[a++] = strdup(token);
+            token = strtok(NULL, "&");
     }
-    args[i] = NULL;
+    commands[a] = NULL;
 
-    if (args[0] == NULL)
-        return 0;
-
-    if (strcmp(args[0], "exit") == 0) {
-        if(args[1] != NULL)
-            write(STDERR_FILENO, error_message, strlen(error_message));
-        else
-            exit(0);
-    }
-    else if (strcmp(args[0], "cd") == 0) {
-        if (args[1] == NULL) {
-            write(STDERR_FILENO, error_message, strlen(error_message));
-            return 1;
-        }
-        chdir(args[1]);
-        return 0;
-    }
-    else if (strcmp(args[0], "path") == 0) {
+    int p = 0;
+    int pids[64];
+    for (int c = 0; c < a; c++) {
         int i = 0;
-        while (path[i] != NULL) {
-            free(path[i]);
-            path[i] = NULL;
-            i++;
-        }
-        i = 0;
-        if (args[1] == NULL) {
-            path[0] = NULL;
-            return 0;
-        }
-        else {
-            int j = 1;  
-            while (args[j] != NULL) {
-                path[i] = strdup(args[j]);
-                i++;
-                j++;
-            }
-            path[i] = NULL;
-        }
-        return 0;
-    }
-    
+        token = strtok(commands[c], " ");
+        int redirect_flag = 0;
+        char *redirect_file = NULL;
+        char *args[64];
 
-    int pid = fork();
-    if (pid < 0) {
-        write(STDERR_FILENO, error_message, strlen(error_message));
-    } 
-    else if (pid == 0) {
-        // child process
-        for (int i = 0; path[i] != NULL; i++) {
-            char full_path[128];
-            strcpy(full_path, path[i]);
-            strcat(full_path, "/");
-            strcat(full_path, args[0]);
-            if (access(full_path, X_OK) == 0) {
-                if (redirect_flag) {
-                    FILE *f = fopen(redirect_file, "w");
-                    if (f == NULL) {
-                        write(STDERR_FILENO, error_message, strlen(error_message));
-                        exit(1);
-                    }
-                    dup2(fileno(f), STDOUT_FILENO);
-                    fclose(f);
+        while (token != NULL && i < 63) {
+            if (strcmp(token, ">") == 0) {
+                token = strtok(NULL, " ");
+                if (token == NULL) {
+                    write(STDERR_FILENO, error_message, strlen(error_message));
+                    return 1;
                 }
-                execv(full_path, args);
-                // if execv returns, it's an error
+                redirect_flag = 1;
+                redirect_file = token;
+
+                if (strtok(NULL, " ") != NULL) {
+                    write(STDERR_FILENO, error_message, strlen(error_message));
+                    return 1;
+                }
+                break;
+            }
+            args[i++] = token;
+            token = strtok(NULL, " ");
+        }
+        args[i] = NULL;
+
+        if (args[0] == NULL)
+            return 0;
+
+        if (strcmp(args[0], "exit") == 0) {
+            if(args[1] != NULL)
+                write(STDERR_FILENO, error_message, strlen(error_message));
+            else
+                exit(0);
+        }
+        else if (strcmp(args[0], "cd") == 0) {
+            if (args[1] == NULL) {
                 write(STDERR_FILENO, error_message, strlen(error_message));
             }
+            chdir(args[1]);
+            continue;
         }
-        // command not found in any path
-        write(STDERR_FILENO, error_message, strlen(error_message));
-    } 
-    else
-        wait(NULL);
-
+        else if (strcmp(args[0], "path") == 0) {
+            int i = 0;
+            while (path[i] != NULL) {
+                free(path[i]);
+                path[i] = NULL;
+                i++;
+            }
+            i = 0;
+            if (args[1] == NULL) {
+                path[0] = NULL;
+                continue;
+            }
+            else {
+                int j = 1;  
+                while (args[j] != NULL) {
+                    path[i] = strdup(args[j]);
+                    i++;
+                    j++;
+                }
+                path[i] = NULL;
+            }
+            continue;
+        }
+        int pid = fork();
+        if (pid > 0)
+            pids[p++] = pid;
+        if (pid < 0) {
+            write(STDERR_FILENO, error_message, strlen(error_message));
+        } 
+        else if (pid == 0) {
+            // child process
+            for (int i = 0; path[i] != NULL; i++) {
+                char full_path[128];
+                strcpy(full_path, path[i]);
+                strcat(full_path, "/");
+                strcat(full_path, args[0]);
+                if (access(full_path, X_OK) == 0) {
+                    if (redirect_flag) {
+                        FILE *f = fopen(redirect_file, "w");
+                        if (f == NULL) {
+                            write(STDERR_FILENO, error_message, strlen(error_message));
+                            exit(1);
+                        }
+                        dup2(fileno(f), STDOUT_FILENO);
+                        fclose(f);
+                    }
+                    execv(full_path, args);
+                    // if execv returns, it's an error
+                    write(STDERR_FILENO, error_message, strlen(error_message));
+                }
+            }
+            // command not found in any path
+            write(STDERR_FILENO, error_message, strlen(error_message));
+        } 
+    }
+    for (int ps = 0; ps < p; ps++) {
+        waitpid(pids[ps], NULL, 0);
+    }
     return 0;
 }
