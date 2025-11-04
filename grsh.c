@@ -161,7 +161,7 @@ int execute(char *line, char **path) {
         else if (pid < 0) {
             write(STDERR_FILENO, error_message, strlen(error_message));
         } 
-        else if (pid == 0) {
+        else if (pid == 0) { 
             // child process
             for (int i = 0; path[i] != NULL; i++) {
                 char full_path[128];
