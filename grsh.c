@@ -181,13 +181,12 @@ int execute(char *line, char **path) {
                     // if execv returns, it's an error
                     write(STDERR_FILENO, error_message, strlen(error_message));
                 }
-            }
-            // command not found in any path
-            write(STDERR_FILENO, error_message, strlen(error_message));
-        } 
+            } 
+        }
     }
     for (int ps = 0; ps < p; ps++) {
         waitpid(pids[ps], NULL, 0);
     }
+
     return 0;
 }
