@@ -155,9 +155,10 @@ int execute(char *line, char **path) {
             continue;
         }
         int pid = fork();
-        if (pid > 0)
+        if (pid > 0) {
             pids[p++] = pid;
-        if (pid < 0) {
+        }
+        else if (pid < 0) {
             write(STDERR_FILENO, error_message, strlen(error_message));
         } 
         else if (pid == 0) {
@@ -182,6 +183,7 @@ int execute(char *line, char **path) {
                     write(STDERR_FILENO, error_message, strlen(error_message));
                 }
             } 
+            write(STDERR_FILENO, error_message, strlen(error_message));
         }
     }
     for (int ps = 0; ps < p; ps++) {
