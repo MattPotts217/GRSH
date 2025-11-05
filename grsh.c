@@ -32,6 +32,7 @@ int interactive_mode(char **path) {
     char *line = NULL;
     while(1) {
         printf("grsh> "); 
+        fflush(stdout);
         size_t len; //setup buffer for reading input
         len = 0;
         ssize_t read = getline(&line, &len, stdin); 
@@ -182,14 +183,17 @@ int execute(char *line, char **path) {
                     execv(full_path, args);
                     // if execv returns, it's an error
                     write(STDERR_FILENO, error_message, strlen(error_message));
+                    exit(1);
                 }
             } 
             write(STDERR_FILENO, error_message, strlen(error_message));
+            exit(1);
         }
     }
     for (int ps = 0; ps < p; ps++) {
         waitpid(pids[ps], NULL, 0);
     }
-
+    fflush(stdout);
+    sync();
     return 0;
 }
