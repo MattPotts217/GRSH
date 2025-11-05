@@ -189,6 +189,6 @@ int execute(char *line, char **path) {
     for (int ps = 0; ps < p; ps++) {
         waitpid(pids[ps], NULL, 0);
     }
-
+    sync();
     return 0;
 }
