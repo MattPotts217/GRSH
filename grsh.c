@@ -88,8 +88,9 @@ int execute(char *line, char **path) {
     int p = 0;
     int pids[64];
     for (int c = 0; c < a; c++) {
+        char *copy = strdup(commands[c]);
         int i = 0;
-        token = strtok(commands[c], " ");
+        token = strtok(copy, " ");
         int redirect_flag = 0;
         char *redirect_file = NULL;
         char *args[64];
