@@ -20,9 +20,11 @@ int main(int argc, char *argv[]) {
     }
     if (argc > 1) {
         batch_mode(argv[1], path);
+        return 0;
     } 
     else {
         interactive_mode(path);
+        return 0;
     }
 
     return 0;
