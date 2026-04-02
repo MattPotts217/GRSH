@@ -1,4 +1,5 @@
-## Student Name: Matthew Potts
+# Background
+This project was for CSC 331 with Dr. Ngo at West Chester University. This project includes all specifications required below, and the original README is found under this background section.
 
 # Assignment 4: Unix Shell
 

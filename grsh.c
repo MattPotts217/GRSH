@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     if (argc > 2) {
         write(STDERR_FILENO, error_message, strlen(error_message));
     }
-    if (argc > 1) {
+    else if (argc > 1) {
         batch_mode(argv[1], path);
         return 0;
     } 
